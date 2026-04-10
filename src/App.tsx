@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'sonner';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { t } from './translations';
 import Header from './components/Header';
@@ -9,6 +10,7 @@ import OntstaanSection from './components/OntstaanSection';
 import WatJeErvaart from './components/WatJeErvaart';
 import ProductInformatie from './components/ProductInformatie';
 import VerhaalPage from './pages/VerhaalPage';
+import ProductPage from './pages/ProductPage';
 import ErvaartHetZelf from './components/ErvaartHetZelf';
 import MarqueeBand from './components/MarqueeBand';
 import Bubbles from './components/Bubbles';
@@ -16,11 +18,16 @@ import SaffronDecor from './components/SaffronDecor';
 import Reviews from './components/Reviews';
 import VoorWie from './components/VoorWie';
 import VerhaalVanSaffraan from './components/VerhaalVanSaffraan';
+import ProductsSection from './components/ProductsSection';
+import CartDrawer from './components/CartDrawer';
+import { useCartSync } from './hooks/useCartSync';
 
 function HomePage({
   onNavigateVerhaal,
+  onNavigateProduct,
 }: {
   onNavigateVerhaal: () => void;
+  onNavigateProduct: (handle: string) => void;
 }) {
   const { lang } = useLanguage();
   return (
@@ -181,6 +188,8 @@ function HomePage({
 
       <ProductInformatie onOpenWaitlist={() => {}} />
 
+      <ProductsSection onNavigateProduct={onNavigateProduct} />
+
       <div
         style={{
           background: '#fbfaf8',
@@ -319,20 +328,36 @@ function HomePage({
       <div id="contact">
         <Contact />
       </div>
+
+      <CartDrawer />
     </div>
   );
 }
 
-export default function App() {
-  const [page, setPage] = useState<'home' | 'verhaal'>(() => {
-    if (window.location.hash === '#/verhaal') return 'verhaal';
+function AppContent() {
+  useCartSync();
+
+  const [page, setPage] = useState<'home' | 'verhaal' | 'product'>(() => {
+    const hash = window.location.hash;
+    if (hash === '#/verhaal') return 'verhaal';
+    if (hash.startsWith('#/product/')) return 'product';
     return 'home';
+  });
+
+  const [productHandle, setProductHandle] = useState(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#/product/')) return hash.replace('#/product/', '');
+    return '';
   });
 
   useEffect(() => {
     const onHashChange = () => {
-      if (window.location.hash === '#/verhaal') {
+      const hash = window.location.hash;
+      if (hash === '#/verhaal') {
         setPage('verhaal');
+      } else if (hash.startsWith('#/product/')) {
+        setProductHandle(hash.replace('#/product/', ''));
+        setPage('product');
       } else {
         setPage('home');
       }
@@ -353,14 +378,35 @@ export default function App() {
     window.scrollTo({ top: 0 });
   }
 
+  function navigateProduct(handle: string) {
+    window.location.hash = `#/product/${handle}`;
+    setProductHandle(handle);
+    setPage('product');
+    window.scrollTo({ top: 0 });
+  }
+
+  if (page === 'verhaal') {
+    return <VerhaalPage onNavigateHome={navigateHome} />;
+  }
+
+  if (page === 'product') {
+    return (
+      <>
+        <ProductPage handle={productHandle} onNavigateHome={navigateHome} />
+        <CartDrawer />
+      </>
+    );
+  }
+
+  return <HomePage onNavigateVerhaal={navigateVerhaal} onNavigateProduct={navigateProduct} />;
+}
+
+export default function App() {
   return (
     <LanguageProvider>
+      <Toaster position="top-center" />
       <IntroFade />
-      {page === 'verhaal' ? (
-        <VerhaalPage onNavigateHome={navigateHome} />
-      ) : (
-        <HomePage onNavigateVerhaal={navigateVerhaal} />
-      )}
+      <AppContent />
     </LanguageProvider>
   );
 }
