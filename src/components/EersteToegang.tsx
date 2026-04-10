@@ -56,7 +56,7 @@ const closeButtonStyle: React.CSSProperties = {
   transition: 'color 0.2s',
 };
 
-const logoStyle: React.CSSProperties = {
+const _logoStyle: React.CSSProperties = {
   fontFamily: "'Furlong Vintage', Georgia, serif",
   fontWeight: 400,
   fontSize: 'clamp(1.6rem, 5vw, 2.2rem)',
