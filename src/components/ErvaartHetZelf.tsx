@@ -15,7 +15,7 @@ export default function ErvaartHetZelf() {
     if (!naam.trim() || !email.trim()) return;
     setStatus('loading');
     setErrorMsg('');
-    const { success, error } = await sendEmail({
+    const { success } = await sendEmail({
       subject: `Nieuwe waitlist aanmelding: ${naam.trim()}`,
       html: `<h2>Nieuwe waitlist aanmelding</h2><p><strong>Naam:</strong> ${naam.trim()}</p><p><strong>E-mail:</strong> ${email.trim()}</p><p><em>Via: Ervaar het zelf formulier</em></p>`,
     });
