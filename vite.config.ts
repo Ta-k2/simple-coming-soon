@@ -1,22 +1,33 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import fs from 'fs';
+import path from 'path';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-    hmr: {
-      overlay: false,
-    },
+export default defineConfig({
+  plugins: [react()],
+  optimizeDeps: {
+    exclude: ['lucide-react'],
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
-  },
-}));
+  publicDir: (() => {
+    const publicPath = path.resolve(__dirname, 'public');
+    const safePath = path.resolve(__dirname, '.public-safe');
+    try {
+      if (fs.existsSync(safePath)) fs.rmSync(safePath, { recursive: true, force: true });
+      fs.mkdirSync(safePath, { recursive: true });
+      const entries = fs.readdirSync(publicPath);
+      for (const entry of entries) {
+        if (entry.includes(' ')) continue;
+        const src = path.join(publicPath, entry);
+        const dest = path.join(safePath, entry);
+        try {
+          fs.copyFileSync(src, dest);
+        } catch {
+          // skip unreadable files
+        }
+      }
+    } catch {
+      return 'public';
+    }
+    return '.public-safe';
+  })(),
+});
