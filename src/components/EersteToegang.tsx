@@ -56,15 +56,6 @@ const closeButtonStyle: React.CSSProperties = {
   transition: 'color 0.2s',
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _logoStyle: React.CSSProperties = {
-  fontFamily: "'Furlong Vintage', Georgia, serif",
-  fontWeight: 400,
-  fontSize: 'clamp(1.6rem, 5vw, 2.2rem)',
-  lineHeight: 1,
-  letterSpacing: '0.02em',
-  marginBottom: '0.4rem',
-};
 
 const dividerStyle: React.CSSProperties = {
   width: '28px',
