@@ -56,6 +56,7 @@ const closeButtonStyle: React.CSSProperties = {
   transition: 'color 0.2s',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _logoStyle: React.CSSProperties = {
   fontFamily: "'Furlong Vintage', Georgia, serif",
   fontWeight: 400,
