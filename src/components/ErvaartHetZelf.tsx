@@ -107,11 +107,12 @@ export default function ErvaartHetZelf() {
           style={{
             fontFamily: "'Furlong Vintage', Georgia, serif",
             fontWeight: 400,
-            fontSize: 'clamp(2.8rem, 7vw, 4.8rem)',
+            fontSize: 'clamp(1.8rem, 7vw, 4.8rem)',
             lineHeight: 1.05,
             letterSpacing: '0.01em',
             color: '#fbfaf8',
             marginBottom: '1.75rem',
+            whiteSpace: 'nowrap',
           }}
         >
           {t.ervaartHetZelf.heading[lang]}
